@@ -36,7 +36,7 @@ function wp_attach_dir() {
 	$diag = '<div id="dialog" title="Be weary">You have to choose game template for this to work</div>';
 	wp_nonce_field(plugin_basename(__FILE__), 'wp_attached_folder_nonce');
 
-	$html = 'Name the folder for a game: <input type="text" id="folder" name="folder" maxlength="5"/>';
+	$html = 'Name the folder for a game: <input type="text" id="folder" name="folder" maxlength="15"/>';
 	$html .= '<input type="file" id="wp_upl_dir" name="wp_upl_dir[]" size="25" webkitdirectory directory  multiple/>';
 	$html .= '<p class="description">';
 	$html .= 'Upload your folder here.';
@@ -103,13 +103,11 @@ function verify_and_upload( $id ) {
 	if(!empty($_FILES['wp_upl_dir']) or $_POST['attach_dir'] != 'None') {
 		
 
-	if(strcmp(get_page_template_slug($id), 'game_template.php')==0) {
-		upload_file_meta($id);
-		attach_existing($id); 
-	} else {
-		add_action('admin_notices', 'not_game_template_notice');
-	}
-	
+		if(strcmp(get_page_template_slug($id), 'game_template.php')==0) {
+			upload_file_meta($id);
+			attach_existing($id); 
+		}
+
 	}
 }
 
@@ -123,7 +121,7 @@ function attach_existing($id) {
 	if( is_dir($attached) ) {
 		if($dir = opendir($attached)) {
 			while (($file = readdir($dir))!== false) {
-				if(strncmp( $file, '.', strlen( '.' ) )) {
+				if(strpos( $file, '.js' )) {
 					add_post_meta($id, 'attached_ex_file' .$file_num, plugin_dir_url(__FILE__) . $fold . $file);
 					update_post_meta($id, 'attached_ex_file' .$file_num, plugin_dir_url(__FILE__). $fold . $file);
 					$arr[] = $file;
@@ -148,14 +146,12 @@ function upload_file_meta( $id ) {
 
 	//$file = $_FILES['wp_upl_dir'];
 	$upload = array();
-
-    //if(in_array($uploaded_type, $supported_types))  //CHECK TYPES? OR JUST UPLOAD EVERYTHING?
 	foreach ($_FILES as $file) {
-			
-	for($i=0; $i <= count($file['name']); $i++) 
-	{       	
-		$upload[] = wp_upload_bits($file['name'][$i], null, file_get_contents($file['tmp_name'][$i]));     	
-	}
+
+		for($i=0; $i <= count($file['name']); $i++) 
+		{       	
+			$upload[] = wp_upload_bits($file['name'][$i], null, file_get_contents($file['tmp_name'][$i]));     	
+		}
 
 	}
 
@@ -164,16 +160,32 @@ function upload_file_meta( $id ) {
 
 	foreach ($upload as $uploaded)
 	{
+		$file_url = $uploaded['url'];
+
 		if( isset($uploaded['error']) && $uploaded['error'] != 0 ) {
 			wp_die('There was an error uploading your files. The error is: ' . $uploaded['error']); 
 		}
-		add_post_meta($id, 'attached_file'.$file_num, $uploaded['url']);
-		update_post_meta($id, 'attached_file'.$file_num, $uploaded['url']);
-		$file_num++;
+		if( strpos( $file_url, '.js' ) ) {
+
+			if (strpos( $file_url, 'game.js')) {
+				link_images($uploaded['file']);
+			}
+
+			add_post_meta($id, 'attached_file'.$file_num, $file_url);
+			update_post_meta($id, 'attached_file'.$file_num, $file_url);
+			$file_num++;
+		}
 	}
 	add_post_meta($id, 'files_uploaded', $file_num);
-	update_post_meta($id, 'files_uploaded', $file_num);                                                                                            
+	update_post_meta($id, 'files_uploaded', $file_num);
+}
 
+function link_images($file) {
+	$contents = file_get_contents($file);
+	$plug_dir =  wp_upload_dir();
+	$path = str_replace("/var/www/html","", $plug_dir['path']);
+	$contents = str_replace("****", $path, $contents);
+	file_put_contents($file, $contents);
 }
 
 
@@ -195,23 +207,15 @@ function upload_to_plugin_dir( $dir ) {
 	return $dir;
 }
 
-function not_game_template_notice() {
-    ?>
-    <div class="error notice">
-        <p><?php _e( 'There has been an error. Bummer!', 'my_plugin_textdomain' ); ?></p>
-    </div>
-    <?php
-}
-
 function update_edit_form() {
 	echo ' enctype="multipart/form-data"';
 }
 
 function message_script() {
 	wp_enqueue_script('jquery');
-    wp_enqueue_script('jquery-ui-core');
-    wp_enqueue_script("jquery-effects-core");
-    wp_enqueue_script('jquery-ui-dialog');
+	wp_enqueue_script('jquery-ui-core');
+	wp_enqueue_script("jquery-effects-core");
+	wp_enqueue_script('jquery-ui-dialog');
 	wp_enqueue_style("wp-jquery-ui-dialog");
 	wp_enqueue_script('message_script', plugin_dir_url(__FILE__) . 'js/template_message.js');
 }

@@ -9,9 +9,9 @@ get_header();
 <?php
 function link_scr($script_url) {
 
-         if( strpos( $script_url, '.js' ) ) {
+         //if( strpos( $script_url, '.js' ) ) {
             echo "<script type='text/javascript' src = ". $script_url. "></script>";
-        }
+        //}
 }
 
 
@@ -91,9 +91,10 @@ function link_files() {
                 echo "<div id='script_place1'></div>";
                 echo "<div id='script_place4'></div>";
                 echo '<canvas id = "canvas" width="640" height="480"></canvas>';
+                echo "<script src='https://code.createjs.com/createjs-2015.11.26.min.js'></script>";
                 link_files();
                 echo '<script>preload();</script>';
-                 echo "<h1>".$files_uploaded."</h1>";
+                //echo "<h1>".$files_uploaded."</h1>";
 				?>
             </div>
             <?php get_sidebar(); ?>

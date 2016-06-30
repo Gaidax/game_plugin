@@ -18,6 +18,9 @@ defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 include( plugin_dir_path( __FILE__ ) . '/functions.php');
 include( plugin_dir_path( __FILE__ ) . '/metabox.php');
 include( plugin_dir_path( __FILE__ ) . '/templater.php');
+//include( plugin_dir_path( __FILE__ ) . '/file_max_uploads_increase.php');
 include( plugin_dir_path( __FILE__ ) . '/ChromePhp.php');
+
+ini_set('max_file_uploads', '150');
 
 ?>
