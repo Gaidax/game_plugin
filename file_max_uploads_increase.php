@@ -1,4 +1,9 @@
 <?php
+defined( 'ABSPATH' ) OR exit;
+
+$Increase_Uploads_Max = Increase_Uploads_Max::get_instance();
+
+$Increase_Uploads_Max::activate();
 
 class Increase_Uploads_Max {
 
@@ -12,20 +17,23 @@ class Increase_Uploads_Max {
 	}
 
 	public static function activate() {
-		self::increase_uploads("150\n");
+		add_action('admin_notices', 'show_it');
+		//self::increase_uploads('150');
 	}
 
 	public static function deactivate() {
-		self::increase_uploads("20\n");
+		self::increase_uploads('20');
 	}
 
-	public static function increase_uploads($max) {
-		$ini_file = basename(php_ini_loaded_file());
+	public static function increase_uploads($upload_max) {
+		$conf_file = 'php.ini';
+		//$conf_file = '.htaccess';
+		$ini_file = $_SERVER["DOCUMENT_ROOT"] . '/'. $conf_file;
 		$uploads = 'max_file_uploads = 150';
-		$upload_max = $max;
 
 			if ( file_exists( $ini_file ) ) {
-			$ch = "YES";
+
+
 				$ini_contents = file_get_contents( $ini_file );
 
 				if ( $ini_contents ) {
@@ -33,12 +41,17 @@ class Increase_Uploads_Max {
 					if ( preg_match( '~max_file_uploads\s*=\s*.*~', $ini_contents ) ) {
 
 						$updated_contents = preg_replace( '~(max_file_uploads\s*=\s*)(.*)~', "\${1}$upload_max", $ini_contents );
-
 						$added_uploads = file_put_contents( $ini_file, $updated_contents, LOCK_EX );
+						//system('/etc/init.d/apache2 restart');
+						//system("sudo /etc/init.d/apache2 restart");
+						add_action('admin_notices', 'show_it');
 
 					} else {
 
 						$added_uploads = file_put_contents( $ini_file, $uploads, FILE_APPEND | LOCK_EX );
+						 //system('/etc/init.d/apache2 restart');
+						 //system("sudo /etc/init.d/apache2 restart");
+						 add_action('admin_notices', 'show_it');
 					}
 
 			} else {
@@ -55,20 +68,15 @@ class Increase_Uploads_Max {
 			    fclose($handlec);
 					
 			}
+			//system('/etc/init.d/apache2 restart');
 	} 
 }
 }
 
-$Increase_Uploads_Max = Increase_Uploads_Max::get_instance();
-register_activation_hook(__FILE__, array( 'Increase_Uploads_Max', 'activate' ) );
-register_deactivation_hook(__FILE__, array( 'Increase_Uploads_Max', 'deactivate' ) );
-add_action('admin_notices', 'show_ini');
 
-function show_ini() {
-	$max_upl = ini_get('max_file_uploads');
-	echo $max_upl;
-	echo "<br>";
-	echo php_ini_loaded_file();
+function show_it() {
+
+	echo ini_get('max_file_uploads');
 }
 
 ?>
