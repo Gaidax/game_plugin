@@ -1,25 +1,22 @@
 <?php
 
-defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
-
-/**
- * @package Prototype
- * @version 0.01
- */
 /*
-Plugin Name: MyPrototype
-Plugin URI: not-yet.com
-Description: Testing plugin
-Author: Oleg Olegov
-Version: Alpha
-Author URI: not-yet.com
-*/
+   Plugin Name: HTML5GameInsert
+   Plugin URI: http://wordpress.org/extend/plugins/html5gameinsert/
+   Version: 0.1
+   Author: Vasyl Milchevskyi
+   Description: Add a specific HTML5 based game on your page. (Has to be create.js game)
+   Text Domain: html5gameinsert
+   License: GPLv3
+  */
+
 
 //include( plugin_dir_path( __FILE__ ) . '/ChromePhp.php'); \\chrome logger
 
 //register_activation_hook( __FILE__, array( 'Increase_Uploads_Max', 'deactivate' ) ); \\--never works
 //register_deactivation_hook(__FILE__, array( 'Increase_Uploads_Max', 'deactivate' ) ); \\--never works
 
+defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 add_action( 'plugins_loaded', array('Plugin_Init', 'init'));
 
 class Plugin_Init

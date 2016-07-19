@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @package Prototype
- * @version 0.01
- */
-
-
 
 //add_action('admin_notices', 'log_it');
 add_action('media_buttons', 'prototype_button', 15);

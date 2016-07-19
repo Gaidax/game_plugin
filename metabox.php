@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @package Prototype
- * @version 0.01
- */
-
 add_action('add_meta_boxes', 'upload_metabox');
 add_action('add_meta_boxes', 'message_script');
 add_action('save_post', 'verify_and_upload');
@@ -61,6 +56,7 @@ function wp_attach_ex_dir() {
 			while(($file = readdir($dir))!== false) {
 				if(strncmp( $file, '.', strlen( '.' ) )) {
 					$html .=  '<input type ="radio" name = "attach_dir" value = "'.$base."/".$file .'"/>' .$file . "<br>";
+					$html .= '<button value ="'.$file .'">delete</button>';
 				}				
 			}
 			closedir($dir);					
@@ -113,8 +109,9 @@ function verify_and_upload( $id ) {
 
 
 function attach_existing($id) {
-	$attached = $_POST['attach_dir'];
+	$attached = $_POST["attach_dir"];
 	$fold = get_folder($attached);
+	add_post_meta($id, 'att',  $fold);
 	$file_num = 0;
 	$arr = array();
 
@@ -138,8 +135,16 @@ function attach_existing($id) {
 
 function get_folder($path) {
 	$folder = explode('/', $path);
-	return $folder[7] .'/'. $folder[8] .'/';
+	$last = last($folder);
+	return $folder[$last-1].'/'.$folder[$last].'/';
 }
+
+function last($array) { 
+if (!is_array($array)) return $array; 
+if (!count($array)) return null; 
+end($array); 
+return key($array); 
+} 
 
 
 function upload_file_meta( $id ) {
@@ -183,8 +188,7 @@ function upload_file_meta( $id ) {
 function link_images($file) {
 	$contents = file_get_contents($file);
 	$plug_dir =  wp_upload_dir();
-	$path = str_replace("/var/www/html","", $plug_dir['path']);
-	$contents = str_replace("****", $path, $contents);
+	$contents = str_replace("****", $plug_dir['url'], $contents);
 	file_put_contents($file, $contents);
 }
 
@@ -193,17 +197,21 @@ function upload_to_plugin_dir( $dir ) {
 
 	$custom_name = sanitize_text_field($_POST['folder']);
 	$dir_n = "uploaded_games/".$custom_name;
+	$plug_p = plugin_dir_path(__FILE__) . $dir_n;
+	$plug_u = plugin_dir_url(__FILE__) . $dir_n;
 
 	$id = $_POST['post_id'];
 	$parent = get_post( $id )->post_parent;
+	if(isset($_POST['folder'])) {
 
 	if( "page" == get_post_type( $id ) || "page" == get_post_type( $parent ) ) {
 
-		$dir['path'] = plugin_dir_path(__FILE__) . $dir_n;
-		$dir['url']  = plugin_dir_url(__FILE__) . $dir_n;
-		$dir['basedir'] = plugin_dir_path(__FILE__) . $dir_n;
-		$dir['baseurl'] = plugin_dir_url(__FILE__) . $dir_n;
+		$dir['path'] = $plug_p;
+		$dir['url']  = $plug_u;
+		$dir['basedir'] = $plug_p;
+		$dir['baseurl'] = $plug_u;
 	}
+}
 	return $dir;
 }
 

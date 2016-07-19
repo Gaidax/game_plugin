@@ -6,6 +6,10 @@
  */
 
 
+$PageTemp = PageTemplater::get_instance();
+
+$Increase_Uploads_Max::get_instance();
+
 class PageTemplater {
 
     protected $plugin_slug;
@@ -49,7 +53,6 @@ class PageTemplater {
     }
 
 
-    
     public function register_project_templates( $atts ) {
        
         $cache_key = 'page_templates-' . md5( get_theme_root() . '/' . get_stylesheet() );
@@ -89,7 +92,5 @@ class PageTemplater {
      return $template;
  }
 }
-
-add_action( 'plugins_loaded', array( 'PageTemplater', 'get_instance' ) );
 
 ?>

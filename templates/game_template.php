@@ -18,13 +18,16 @@ function link_scr($script_url) {
 function link_files() {
     global $files_uploaded;
     $files_attached = get_post_meta(get_the_ID(), 'files_atached_existing', true);
+    delete_post_meta(get_the_ID(), 'files_atached_existing', true);
     $files_uploaded = get_post_meta(get_the_ID(), 'files_uploaded', true);
+    delete_post_meta(get_the_ID(), 'files_uploaded', true);
     
    if(!empty($files_attached)) {
         $file_num = $files_attached;
         for ($i=0; $i < $file_num ; $i++) {
             $single_scr = get_post_meta(get_the_ID(), 'attached_ex_file' . $i, true);
             link_scr($single_scr);
+           delete_post_meta(get_the_ID(), 'attached_ex_file' . $i, true);
 
         }
     } elseif (!empty($files_uploaded)) {
@@ -32,6 +35,7 @@ function link_files() {
             for ($i=0; $i < $file_num ; $i++) {
                  $single_scr = get_post_meta(get_the_ID(), 'attached_file' . $i, true);
                  link_scr($single_scr);
+                 delete_post_meta(get_the_ID(), 'attached_file' . $i, true);
         }
             }
             else {
@@ -81,20 +85,16 @@ function link_files() {
     <div id="content">
         <div class="<?php echo deliver_get_content_classes( false, 'content-wrapper' ); ?>">
             <div id="main" role="main">
-                <?php deliver_get_template( 'content-single', $post_layout );
-
-/*                if(get_post_meta(get_the_ID(), 'message', true)) {
-                    echo "<script type='text/javascript'>alert('You have to select Add Game Template for the game to work');</script>"
-                }*/
-                echo "<div id='script_place3'></div>";
-                echo "<div id='script_place2'></div>";
-                echo "<div id='script_place1'></div>";
-                echo "<div id='script_place4'></div>";
+                <?php 
+                deliver_get_template( 'content-single', $post_layout );
+                $sp = get_post_meta(get_the_ID(),'att');
+                var_dump($sp);
+                echo "<br>";
+                //echo $sp;
                 echo '<canvas id = "canvas" width="640" height="480"></canvas>';
                 echo "<script src='https://code.createjs.com/createjs-2015.11.26.min.js'></script>";
                 link_files();
                 echo '<script>preload();</script>';
-                //echo "<h1>".$files_uploaded."</h1>";
 				?>
             </div>
             <?php get_sidebar(); ?>
