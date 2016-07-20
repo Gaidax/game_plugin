@@ -1,5 +1,6 @@
 <?php
 
+add_action('add_meta_boxes', 'delete_fold');
 add_action('add_meta_boxes', 'upload_metabox');
 add_action('add_meta_boxes', 'message_script');
 add_action('save_post', 'verify_and_upload');
@@ -28,7 +29,7 @@ function upload_metabox() {
 
 
 function wp_attach_dir() {
-	$diag = '<div id="dialog" title="Be weary">You have to choose game template for this to work</div>';
+	$diag = '<div id = "diag_place"/>';
 	wp_nonce_field(plugin_basename(__FILE__), 'wp_attached_folder_nonce');
 
 	$html = 'Name the folder for a game: <input type="text" id="folder" name="folder" maxlength="15"/>';
@@ -55,18 +56,17 @@ function wp_attach_ex_dir() {
 		if($dir = opendir($base)) {
 			while(($file = readdir($dir))!== false) {
 				if(strncmp( $file, '.', strlen( '.' ) )) {
-					$html .=  '<input type ="radio" name = "attach_dir" value = "'.$base."/".$file .'"/>' .$file . "<br>";
-					$html .= '<button value ="'.$file .'">delete</button>';
+					$html .=  '<input type ="radio" id="'.$file.'" name = "attach_dir" value = "'.$base."/".$file .'"><label for="'.$file.'">'.$file.'</label>';
+					$html .= '<input class="selector" id = "'.$file.'" type="button" value = "delete"/><br>';
 				}				
 			}
 			closedir($dir);					
 		}
 	}
-	$html .= '<input type ="radio" name = "attach_dir" value = "None" checked/>None<br>';
+	$html .= '<br><input type ="radio" id="None" name = "attach_dir" value = "None" checked/><label for="None">None</label>  <br>';
 	$html .= '<br>';
 	$html .= '<p class="description">';
 	$html .= 'Attach a folder to the page here.';
-	$html .= $diag;
 	$html .= '</p>';
 	echo $html;
 }
@@ -140,10 +140,10 @@ function get_folder($path) {
 }
 
 function last($array) { 
-if (!is_array($array)) return $array; 
-if (!count($array)) return null; 
-end($array); 
-return key($array); 
+	if (!is_array($array)) return $array; 
+	if (!count($array)) return null; 
+	end($array); 
+	return key($array); 
 } 
 
 
@@ -185,6 +185,7 @@ function upload_file_meta( $id ) {
 	update_post_meta($id, 'files_uploaded', $file_num);
 }
 
+
 function link_images($file) {
 	$contents = file_get_contents($file);
 	$plug_dir =  wp_upload_dir();
@@ -194,6 +195,9 @@ function link_images($file) {
 
 
 function upload_to_plugin_dir( $dir ) {
+	if(!isset($_POST['folder'])) {
+		return null;
+	}
 
 	$custom_name = sanitize_text_field($_POST['folder']);
 	$dir_n = "uploaded_games/".$custom_name;
@@ -202,22 +206,48 @@ function upload_to_plugin_dir( $dir ) {
 
 	$id = $_POST['post_id'];
 	$parent = get_post( $id )->post_parent;
-	if(isset($_POST['folder'])) {
+	//if(isset($_POST['folder'])) {
 
-	if( "page" == get_post_type( $id ) || "page" == get_post_type( $parent ) ) {
+		if( "page" == get_post_type( $id ) || "page" == get_post_type( $parent ) ) {
 
-		$dir['path'] = $plug_p;
-		$dir['url']  = $plug_u;
-		$dir['basedir'] = $plug_p;
-		$dir['baseurl'] = $plug_u;
+			$dir['path'] = $plug_p;
+			$dir['url']  = $plug_u;
+			$dir['basedir'] = $plug_p;
+			$dir['baseurl'] = $plug_u;
+		//}
 	}
-}
 	return $dir;
 }
+
 
 function update_edit_form() {
 	echo ' enctype="multipart/form-data"';
 }
+
+
+function delete_fold() {
+	$success = 0;	
+	if(isset($_GET["deletion"])) {	
+		$to_del = $_GET["deletion"];
+		if(delTree(plugin_dir_path(__FILE__)."/uploaded_games/".$to_del)) {
+			$success = 1;
+		} else {
+			$success = 2;
+		}
+		return $success;
+	}
+	return $success;
+}
+
+
+function delTree($dir) { 
+	$files = array_diff(scandir($dir), array('.','..')); 
+	foreach ($files as $file) { 
+		(is_dir("$dir/$file")) ? delTree("$dir/$file") : unlink("$dir/$file"); 
+	} 
+	return rmdir($dir); 
+} 
+
 
 function message_script() {
 	wp_enqueue_script('jquery');
@@ -225,7 +255,14 @@ function message_script() {
 	wp_enqueue_script("jquery-effects-core");
 	wp_enqueue_script('jquery-ui-dialog');
 	wp_enqueue_style("wp-jquery-ui-dialog");
+	wp_enqueue_style('button_style', plugin_dir_url(__FILE__) . 'css/main.css');
 	wp_enqueue_script('message_script', plugin_dir_url(__FILE__) . 'js/template_message.js');
+	wp_enqueue_script('deletion_message', plugin_dir_url(__FILE__) . 'js/delete_game.js');
+	wp_localize_script( 'deletion_message', 'message',
+			array( 'success_state' => delete_fold() ) );
+/*		wp_localize_script( 'deletion_script', 'ajax_object',
+array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'to_delete' => 1234 ) );*/
+
 }
 
 ?>

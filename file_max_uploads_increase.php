@@ -43,12 +43,13 @@ class Increase_Uploads_Max {
 	public static function change_uploads() {
 		global $ini_file;
 		global $site_root;
+		$ini = $ini_file;
 
-	if ( file_exists( $ini_file ) ) {
+			if ( file_exists( $ini ) ) {
 				self::edit_ini();
-		} else {
+	} else {
 		$ini = php_ini_loaded_file();
-		copy($ini, $site_root.'/'.self::$conf_file);
+		copy($ini, $site_root);
 		self::edit_ini();
 	}
 }
@@ -90,13 +91,13 @@ public static function edit_ini() {
 			    fclose($handlec);
 					
 			}
+
 }
 }
 
 
 function show_it() {
-	echo php_ini_loaded_file();
-	echo "<br>";
+
 	echo ini_get('max_file_uploads');
 }
 

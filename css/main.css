@@ -1,0 +1,311 @@
+.selector {
+  animation-duration: 0.0001s;
+  animation-name: mui-node-inserted;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 18px;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.87);
+  background-color: #FFF;
+  transition: all 0.2s ease-in-out;
+  display: inline-block;
+  height: 36px;
+  padding: 0 26px;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+  background-image: none;
+  text-align: center;
+  line-height: 36px;
+  vertical-align: middle;
+  white-space: nowrap;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  font-size: 14px;
+  letter-spacing: 0.03em;
+  position: relative;
+  overflow: hidden;
+}
+
+.selector:hover, .selector:focus, .selector:active {
+  color: rgba(0, 0, 0, 0.87);
+  background-color: white;
+}
+
+.selector[disabled]:hover, .selector[disabled]:focus, .selector[disabled]:active {
+  color: rgba(0, 0, 0, 0.87);
+  background-color: #FFF;
+}
+
+.selector.selector--flat {
+  color: rgba(0, 0, 0, 0.87);
+  background-color: transparent;
+}
+
+.selector.selector--flat:hover, .selector.selector--flat:focus, .selector.selector--flat:active {
+  color: rgba(0, 0, 0, 0.87);
+  background-color: #f2f2f2;
+}
+
+.selector.selector--flat[disabled]:hover, .selector.selector--flat[disabled]:focus, .selector.selector--flat[disabled]:active {
+  color: rgba(0, 0, 0, 0.87);
+  background-color: transparent;
+}
+
+.selector:hover, .selector:focus, .selector:active {
+  outline: 0;
+  text-decoration: none;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.selector:hover, .selector:focus {
+  box-shadow: 0 0px 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2);
+}
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  .selector:hover, .selector:focus {
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.12), -1px 0px 2px rgba(0, 0, 0, 0.12), 0 0px 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.selector:active:hover {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+}
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  .selector:active:hover {
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.12), -1px 0px 2px rgba(0, 0, 0, 0.12), 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  }
+}
+
+.selector:disabled, .selector.mui--is-disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.60;
+  box-shadow: none;
+}
+
+.selector + .selector {
+  margin-left: 8px;
+}
+
+.selector--flat {
+  background-color: transparent;
+}
+
+.selector--flat:hover, .selector--flat:focus, .selector--flat:active, .selector--flat:active:hover {
+  box-shadow: none;
+  background-color: #f2f2f2;
+}
+
+.selector--raised, .selector--fab {
+  box-shadow: 0 0px 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2);
+}
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  .selector--raised, .selector--fab {
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.12), -1px 0px 2px rgba(0, 0, 0, 0.12), 0 0px 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.selector--raised:active, .selector--fab:active {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+}
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  .selector--raised:active, .selector--fab:active {
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.12), -1px 0px 2px rgba(0, 0, 0, 0.12), 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  }
+}
+
+.selector--fab {
+  position: relative;
+  padding: 0;
+  width: 55px;
+  height: 55px;
+  line-height: 55px;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.selector--primary {
+  color: #FFF;
+  background-color: #2196F3;
+}
+
+.selector--primary:hover, .selector--primary:focus, .selector--primary:active {
+  color: #FFF;
+  background-color: #39a1f4;
+}
+
+.selector--primary[disabled]:hover, .selector--primary[disabled]:focus, .selector--primary[disabled]:active {
+  color: #FFF;
+  background-color: #2196F3;
+}
+
+.selector--primary.selector--flat {
+  color: #2196F3;
+  background-color: transparent;
+}
+
+.selector--primary.selector--flat:hover, .selector--primary.selector--flat:focus, .selector--primary.selector--flat:active {
+  color: #2196F3;
+  background-color: #f2f2f2;
+}
+
+.selector--primary.selector--flat[disabled]:hover, .selector--primary.selector--flat[disabled]:focus, .selector--primary.selector--flat[disabled]:active {
+  color: #2196F3;
+  background-color: transparent;
+}
+
+.selector--dark {
+  color: #FFF;
+  background-color: #424242;
+}
+
+.selector--dark:hover, .selector--dark:focus, .selector--dark:active {
+  color: #FFF;
+  background-color: #4f4f4f;
+}
+
+.selector--dark[disabled]:hover, .selector--dark[disabled]:focus, .selector--dark[disabled]:active {
+  color: #FFF;
+  background-color: #424242;
+}
+
+.selector--dark.selector--flat {
+  color: #424242;
+  background-color: transparent;
+}
+
+.selector--dark.selector--flat:hover, .selector--dark.selector--flat:focus, .selector--dark.selector--flat:active {
+  color: #424242;
+  background-color: #f2f2f2;
+}
+
+.selector--dark.selector--flat[disabled]:hover, .selector--dark.selector--flat[disabled]:focus, .selector--dark.selector--flat[disabled]:active {
+  color: #424242;
+  background-color: transparent;
+}
+
+.selector--danger {
+  color: #FFF;
+  background-color: #F44336;
+}
+
+.selector--danger:hover, .selector--danger:focus, .selector--danger:active {
+  color: #FFF;
+  background-color: #f55a4e;
+}
+
+.selector--danger[disabled]:hover, .selector--danger[disabled]:focus, .selector--danger[disabled]:active {
+  color: #FFF;
+  background-color: #F44336;
+}
+
+.selector--danger.selector--flat {
+  color: #F44336;
+  background-color: transparent;
+}
+
+.selector--danger.selector--flat:hover, .selector--danger.selector--flat:focus, .selector--danger.selector--flat:active {
+  color: #F44336;
+  background-color: #f2f2f2;
+}
+
+.selector--danger.selector--flat[disabled]:hover, .selector--danger.selector--flat[disabled]:focus, .selector--danger.selector--flat[disabled]:active {
+  color: #F44336;
+  background-color: transparent;
+}
+
+.selector--accent {
+  color: #FFF;
+  background-color: #FF4081;
+}
+
+.selector--accent:hover, .selector--accent:focus, .selector--accent:active {
+  color: #FFF;
+  background-color: #ff5a92;
+}
+
+.selector--accent[disabled]:hover, .selector--accent[disabled]:focus, .selector--accent[disabled]:active {
+  color: #FFF;
+  background-color: #FF4081;
+}
+
+.selector--accent.selector--flat {
+  color: #FF4081;
+  background-color: transparent;
+}
+
+.selector--accent.selector--flat:hover, .selector--accent.selector--flat:focus, .selector--accent.selector--flat:active {
+  color: #FF4081;
+  background-color: #f2f2f2;
+}
+
+.selector--accent.selector--flat[disabled]:hover, .selector--accent.selector--flat[disabled]:focus, .selector--accent.selector--flat[disabled]:active {
+  color: #FF4081;
+  background-color: transparent;
+}
+
+.selector--small {
+  height: 30.6px;
+  line-height: 30.6px;
+  padding: 0 16px;
+  font-size: 13px;
+}
+
+.selector--large {
+  height: 54px;
+  line-height: 54px;
+  padding: 0 26px;
+  font-size: 14px;
+}
+
+.selector--fab.selector--small {
+  width: 44px;
+  height: 44px;
+  line-height: 44px;
+}
+
+.selector--fab.selector--large {
+  width: 75px;
+  height: 75px;
+  line-height: 75px;
+}
+
+label {
+	    font-size: medium;
+}
+
+input[type=radio] {
+    display:none;
+}
+
+input[type=radio] + label:before {
+    content: "";  
+    display: inline-block;  
+    width: 15px;  
+    height: 15px;  
+    vertical-align:middle;
+    margin-right: 8px;  
+    background-color: #aaa;  
+    box-shadow: inset 0px 2px 2px rgba(0, 0, 0, .3);
+    border-radius: 8px; ; 
+}
+
+input[type=radio]:checked + label:before {
+    content: "\2022"; /* Bullet */
+    color:white;
+    background-color: #666; 
+    font-size:1.8em;
+    text-align:center;
+    line-height:14px;
+    text-shadow:0px 0px 3px #eee;
+}
