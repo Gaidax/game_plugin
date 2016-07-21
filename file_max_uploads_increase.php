@@ -68,13 +68,13 @@ public static function edit_ini() {
 						$updated_contents = preg_replace( '~(max_file_uploads\s*=\s*)(.*)~', "\${1}$upload_max", $ini_contents );
 						$added_uploads = file_put_contents( $ini_file, $updated_contents, LOCK_EX );
 						//system("sudo /etc/init.d/apache2 restart"); //might be a bad idea
-						add_action('admin_notices', 'show_it');
+						//add_action('admin_notices', 'show_it'); debug
 
 					} else {
 
 						$added_uploads = file_put_contents( $ini_file, self::$uploads_str, FILE_APPEND | LOCK_EX );
 						 //system("sudo /etc/init.d/apache2 restart");
-						 add_action('admin_notices', 'show_it');
+						 //add_action('admin_notices', 'show_it');
 					}
 
 			} else {
@@ -98,7 +98,7 @@ public static function edit_ini() {
 
 function show_it() {
 
-	echo ini_get('max_file_uploads');
+	echo ini_get('max_file_uploads'); //debug
 }
 
 ?>

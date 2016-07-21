@@ -87,10 +87,6 @@ function link_files() {
             <div id="main" role="main">
                 <?php 
                 deliver_get_template( 'content-single', $post_layout );
-                $sp = get_post_meta(get_the_ID(),'att');
-                var_dump($sp);
-                echo "<br>";
-                //echo $sp;
                 echo '<canvas id = "canvas" width="640" height="480"></canvas>';
                 echo "<script src='https://code.createjs.com/createjs-2015.11.26.min.js'></script>";
                 link_files();

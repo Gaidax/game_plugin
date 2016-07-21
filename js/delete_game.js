@@ -6,7 +6,10 @@ jQuery(function($){
            var url = window.location.href;
            window.location.href=url+"&deletion="+to_delete;
         }); 
-    	if(message.success_state == 1) {
+        var success = message.success_state;
+        if(success !== undefined && success !== null) {
+
+    	if(success)  {
     		to_delete = getParameterByName('deletion');
     		$('#diag_place').append('<div id="dialog" title="Deletion">Deleted '+to_delete+'</div>')
 			$('#dialog').dialog({
@@ -14,7 +17,7 @@ jQuery(function($){
   					$('#dialog').remove();
   				}
 			});
-    	} else if(message.success_state == 2) {
+    	} else if(!success) {
     		to_delete = getParameterByName('deletion');
     		 $('#diag_place').append('<div id="dialog" title="Deletion">Was unable to delete '+to_delete+'. May be the problem with permissions</div>')
 			$('#dialog').dialog({
@@ -22,7 +25,8 @@ jQuery(function($){
   					$('#dialog').remove();
   				}
 			});
-    	}   
+    	} 
+    	        } 
     });
 });
 

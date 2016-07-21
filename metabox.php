@@ -29,7 +29,7 @@ function upload_metabox() {
 
 
 function wp_attach_dir() {
-	$diag = '<div id = "diag_place"/>';
+	$diag = '<div id = "diag_place"></div>';
 	wp_nonce_field(plugin_basename(__FILE__), 'wp_attached_folder_nonce');
 
 	$html = 'Name the folder for a game: <input type="text" id="folder" name="folder" maxlength="15"/>';
@@ -111,7 +111,6 @@ function verify_and_upload( $id ) {
 function attach_existing($id) {
 	$attached = $_POST["attach_dir"];
 	$fold = get_folder($attached);
-	add_post_meta($id, 'att',  $fold);
 	$file_num = 0;
 	$arr = array();
 
@@ -206,7 +205,6 @@ function upload_to_plugin_dir( $dir ) {
 
 	$id = $_POST['post_id'];
 	$parent = get_post( $id )->post_parent;
-	//if(isset($_POST['folder'])) {
 
 		if( "page" == get_post_type( $id ) || "page" == get_post_type( $parent ) ) {
 
@@ -214,7 +212,6 @@ function upload_to_plugin_dir( $dir ) {
 			$dir['url']  = $plug_u;
 			$dir['basedir'] = $plug_p;
 			$dir['baseurl'] = $plug_u;
-		//}
 	}
 	return $dir;
 }
@@ -226,28 +223,31 @@ function update_edit_form() {
 
 
 function delete_fold() {
-	$success = 0;	
+	$success;	
 	if(isset($_GET["deletion"])) {	
 		$to_del = $_GET["deletion"];
-		if(delTree(plugin_dir_path(__FILE__)."/uploaded_games/".$to_del)) {
-			$success = 1;
-		} else {
-			$success = 2;
+		$ps = delTree(plugin_dir_path(__FILE__)."/uploaded_games/".$to_del);
+		if($ps) {
+			$success = $ps;
+		} else if(!$ps) {
+			$success = $ps;
 		}
 		return $success;
 	}
 	return $success;
 }
 
-
-function delTree($dir) { 
+function delTree($dir) {
+	if(opendir($dir)){ 
 	$files = array_diff(scandir($dir), array('.','..')); 
 	foreach ($files as $file) { 
 		(is_dir("$dir/$file")) ? delTree("$dir/$file") : unlink("$dir/$file"); 
 	} 
-	return rmdir($dir); 
+	return rmdir($dir);
+	} else {
+		return true;
+	}
 } 
-
 
 function message_script() {
 	wp_enqueue_script('jquery');
