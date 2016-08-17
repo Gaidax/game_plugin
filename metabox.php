@@ -110,23 +110,21 @@ function verify_and_upload( $id ) {
 
 function attach_existing($id) {
 	$attached = $_POST["attach_dir"];
-	$fold = get_folder($attached);
+	//$fold = get_folder($attached);
+	$fold = glob($attached . '/*');
 	$file_num = 0;
-	$arr = array();
+	$files = array();
 
 	if( is_dir($attached) ) {
 		if($dir = opendir($attached)) {
 			while (($file = readdir($dir))!== false) {
 				if(strpos( $file, '.js' )) {
-					add_post_meta($id, 'attached_ex_file' .$file_num, plugin_dir_url(__FILE__) . $fold . $file);
-					update_post_meta($id, 'attached_ex_file' .$file_num, plugin_dir_url(__FILE__). $fold . $file);
-					$arr[] = $file;
-					$file_num++;
+					$files[] = plugin_dir_url(__FILE__) . $fold . $file;
 				}
 			}
 			closedir($dir);		
-			add_post_meta($id, 'files_atached_existing', $file_num);
-			update_post_meta($id, 'files_atached_existing', $file_num);
+			add_post_meta($id, 'attached_files', $files);
+			update_post_meta($id, 'attached_files', $files);
 		}
 	}
 }
@@ -135,7 +133,11 @@ function attach_existing($id) {
 function get_folder($path) {
 	$folder = explode('/', $path);
 	$last = last($folder);
+	if($folder[$last-2]=="pluggin_ad-master") { //plugin_basename( __FILE__ )
 	return $folder[$last-1].'/'.$folder[$last].'/';
+	} else {
+	return  $folder[$last-2]. '/' . $folder[$last-1].'/'.$folder[$last].'/';
+}
 }
 
 function last($array) { 
@@ -145,57 +147,75 @@ function last($array) {
 	return key($array); 
 } 
 
+function move_it($name, $temp_name) {
+	$path_array  = wp_upload_dir();
+		$path = str_replace('\\', '/', $path_array['path']);
+		$fold = sort_src($temp_name);
+		$new_name = $path. $fold;
+		wp_mkdir_p($new_name);
+		if(!move_uploaded_file($temp_name, $new_name . $name)) {
+			$upload['error'] = sprintf( __( 'Could not write file %s' ), $name );
+		} else {
+			$upload['url'] = $path_array['url'] . $fold . $name;
+			$upload['file'] = $new_name . $name;
+		}
+		return $upload;
+}
 
 function upload_file_meta( $id ) {
 
-	//$file = $_FILES['wp_upl_dir'];
 	$upload = array();
 	foreach ($_FILES as $file) {
 
 		for($i=0; $i <= count($file['name']); $i++) 
 		{       	
-			$upload[] = wp_upload_bits($file['name'][$i], null, file_get_contents($file['tmp_name'][$i]));     	
+			$name = $file['name'][$i];
+			$temp_name = $file['tmp_name'][$i];
+			$upload[] = move_it($name, $temp_name);     	
 		}
 
 	}
-
-
-	$file_num = 0;
-
 	foreach ($upload as $uploaded)
 	{
-		$file_url = $uploaded['url'];
-
-		if( isset($uploaded['error']) && $uploaded['error'] != 0 ) {
-			wp_die('There was an error uploading your files. The error is: ' . $uploaded['error']); 
-		}
-		if( strpos( $file_url, '.js' ) ) {
-
-			if (strpos( $file_url, 'game.js')) {
-				link_images($uploaded['file']);
-			}
-
-			add_post_meta($id, 'attached_file'.$file_num, $file_url);
-			update_post_meta($id, 'attached_file'.$file_num, $file_url);
-			$file_num++;
+		if (strpos( $uploaded['url'], 'game.js')) {
+			link_images($uploaded['file']);
 		}
 	}
-	add_post_meta($id, 'files_uploaded', $file_num);
-	update_post_meta($id, 'files_uploaded', $file_num);
-}
 
+		add_post_meta($id, 'uploaded_files', $upload);
+		update_post_meta($id, 'uploaded_files', $upload);
+		add_post_meta($id, 'upload_dir', wp_upload_dir());
+		update_post_meta($id, 'upload_dir', wp_upload_dir());
+}
 
 function link_images($file) {
 	$contents = file_get_contents($file);
 	$plug_dir =  wp_upload_dir();
-	$contents = str_replace("****", $plug_dir['url'], $contents);
+	$contents = str_replace("../..", $plug_dir['url'], $contents);
 	file_put_contents($file, $contents);
+}
+
+function sort_src($file) {
+	$contents = file_get_contents($file);
+	if(strpos( $contents, 'function (config) {')) {
+		return "/config/";
+	} elseif(strpos( $contents, 'function (objects) {')) {
+		return "/objects/";
+	} elseif(strpos( $contents, 'function (core) {')) {
+		return "/core/";
+	} elseif(strpos( $contents, 'function (question_scenes) {')) {
+		return "/scenes/";
+	} elseif(@is_array(getimagesize($file))) {
+		return "/Assets/images/";
+	} else {
+		return "/";
+	}
 }
 
 
 function upload_to_plugin_dir( $dir ) {
 	if(!isset($_POST['folder'])) {
-		return null;
+		return $dir;
 	}
 
 	$custom_name = sanitize_text_field($_POST['folder']);

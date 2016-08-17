@@ -7,44 +7,89 @@
 get_header();
 ?>
 <?php
-function link_scr($script_url) {
+function link_scr($arr) {
 
-         //if( strpos( $script_url, '.js' ) ) {
-            echo "<script type='text/javascript' src = ". $script_url. "></script>";
-        //}
+         if($arr){
+             foreach ($arr as $script_url) {
+
+                echo "<script type='text/javascript' src = ". $script_url. "></script>"; 
+
+        }
+     }
+}
+
+function sort_link($files) {
+       if(!empty($files)) {
+        $file_num = $files;
+        $config = [];
+        $objects = [];
+        $abs_obj = [];
+        $scenes = [];
+        $core = [];
+        $lib = [];
+        $other = [];
+        foreach($files as $file){
+            if(isset($file["url"])) {
+            $single_scr = $file['url'];
+            if(pathinfo($single_scr, PATHINFO_EXTENSION) == 'js') {
+            if(strpos($single_scr, 'config')){
+                $config[] = $single_scr;
+            } elseif (strpos($single_scr, 'objects')) {
+
+                if(strpos($single_scr, 'sprite_')){
+                    $abs_obj[] = $single_scr;
+                } else {
+                $objects[] = $single_scr;                    
+                }
+
+            } elseif (strpos($single_scr, 'scenes')) {
+                $scenes[] = $single_scr;
+            } elseif (strpos($single_scr, 'core')) {
+                $core[] = $single_scr;
+            } elseif (strpos($single_scr, '.min.')) { //put lib name here
+                $lib[] = $single_scr;
+            } else {
+                $other[] = $single_scr;
+            }
+        }
+
+        }
+    }
+           link_scr($lib);
+           link_scr($config);
+           link_scr($abs_obj);
+           link_scr($objects);
+           link_scr($scenes);
+           link_scr($core);
+           link_scr($other);
+     } 
 }
 
 
 function link_files() {
-    global $files_uploaded;
-    $files_attached = get_post_meta(get_the_ID(), 'files_atached_existing', true);
-    delete_post_meta(get_the_ID(), 'files_atached_existing', true);
-    $files_uploaded = get_post_meta(get_the_ID(), 'files_uploaded', true);
-    delete_post_meta(get_the_ID(), 'files_uploaded', true);
-    
-   if(!empty($files_attached)) {
-        $file_num = $files_attached;
-        for ($i=0; $i < $file_num ; $i++) {
-            $single_scr = get_post_meta(get_the_ID(), 'attached_ex_file' . $i, true);
-            link_scr($single_scr);
-           delete_post_meta(get_the_ID(), 'attached_ex_file' . $i, true);
 
-        }
-    } elseif (!empty($files_uploaded)) {
-        $file_num = $files_uploaded;
-            for ($i=0; $i < $file_num ; $i++) {
-                 $single_scr = get_post_meta(get_the_ID(), 'attached_file' . $i, true);
-                 link_scr($single_scr);
-                 delete_post_meta(get_the_ID(), 'attached_file' . $i, true);
-        }
-            }
-            else {
-            $file_num = 0;
-            return $file_num;
-    }
+    $files_attached = get_post_meta(get_the_ID(), 'attached_files', true);
+    delete_post_meta(get_the_ID(), 'attached_files', true);
+    $files_uploaded = get_post_meta(get_the_ID(), 'uploaded_files', true);
+    delete_post_meta(get_the_ID(), 'uploaded_files', true);
+
+    sort_link($files_attached);
+    sort_link($files_uploaded);
 }
 
  ?>
+ 
+ <script type='text/javascript'>
+
+     var loc = <?php echo json_encode(get_post_meta(get_the_ID(), 'upload_dir', true)["url"]); ?>;
+     document.write(loc);
+     var data = ".container {width: 100%;}canvas {border: 1px solid black;border-radius: 5px;margin: 0 auto;display: block;background-color:white;}@font-face {font-family: 'Interstate Regular';src: url('"+loc+"/INTRCM_0.ttf');}@font-face {font-family: 'Interstate Bold';src: url('"+loc+"/INTBDCM_0.ttf');}";
+     var css = document.createElement('style');
+     css.innerHTML = data;
+      document.head.appendChild(css);
+
+ </script>
+
 <?php if ( have_posts() ) { while ( have_posts() ) : the_post(); ?>
     <?php
         $post_layout = get_post_meta( get_the_ID(), '_deliver_page_settings_post_view', true );
@@ -87,11 +132,11 @@ function link_files() {
             <div id="main" role="main">
                 <?php 
                 deliver_get_template( 'content-single', $post_layout );
-                echo '<canvas id = "canvas" width="640" height="480"></canvas>';
+                echo '<canvas id = "canvas" width="1024" height="800"></canvas>';
                 echo "<script src='https://code.createjs.com/createjs-2015.11.26.min.js'></script>";
                 link_files();
-                echo '<script>preload();</script>';
 				?>
+                <span class="jq"></span>
             </div>
             <?php get_sidebar(); ?>
         </div>
