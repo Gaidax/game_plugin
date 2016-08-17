@@ -31,6 +31,9 @@ function sort_link($files) {
         foreach($files as $file){
             if(isset($file["url"])) {
             $single_scr = $file['url'];
+        } else {
+            $single_scr = $file;
+        }
             if(pathinfo($single_scr, PATHINFO_EXTENSION) == 'js') {
             if(strpos($single_scr, 'config')){
                 $config[] = $single_scr;
@@ -53,7 +56,7 @@ function sort_link($files) {
             }
         }
 
-        }
+        
     }
            link_scr($lib);
            link_scr($config);
@@ -78,11 +81,10 @@ function link_files() {
 }
 
  ?>
- 
+
  <script type='text/javascript'>
 
-     var loc = <?php echo json_encode(get_post_meta(get_the_ID(), 'upload_dir', true)["url"]); ?>;
-     document.write(loc);
+     var loc = <?php echo json_encode(get_post_meta(get_the_ID(), 'upload_dir', true)); ?>;
      var data = ".container {width: 100%;}canvas {border: 1px solid black;border-radius: 5px;margin: 0 auto;display: block;background-color:white;}@font-face {font-family: 'Interstate Regular';src: url('"+loc+"/INTRCM_0.ttf');}@font-face {font-family: 'Interstate Bold';src: url('"+loc+"/INTBDCM_0.ttf');}";
      var css = document.createElement('style');
      css.innerHTML = data;
@@ -135,6 +137,7 @@ function link_files() {
                 echo '<canvas id = "canvas" width="1024" height="800"></canvas>';
                 echo "<script src='https://code.createjs.com/createjs-2015.11.26.min.js'></script>";
                 link_files();
+                echo get_post_meta(get_the_ID(), 'upload_dir', true);
 				?>
                 <span class="jq"></span>
             </div>

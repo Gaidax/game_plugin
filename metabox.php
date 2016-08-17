@@ -109,35 +109,19 @@ function verify_and_upload( $id ) {
 
 
 function attach_existing($id) {
-	$attached = $_POST["attach_dir"];
-	//$fold = get_folder($attached);
-	$fold = glob($attached . '/*');
-	$file_num = 0;
-	$files = array();
-
-	if( is_dir($attached) ) {
-		if($dir = opendir($attached)) {
-			while (($file = readdir($dir))!== false) {
-				if(strpos( $file, '.js' )) {
-					$files[] = plugin_dir_url(__FILE__) . $fold . $file;
-				}
-			}
-			closedir($dir);		
-			add_post_meta($id, 'attached_files', $files);
-			update_post_meta($id, 'attached_files', $files);
-		}
-	}
+		$attached = $_POST["attach_dir"];
+		$files = explode("\n", trim(`find -L $attached`));
+		$files = str_replace("/var/www/html", get_site_url(), $files);
+		add_post_meta($id, 'attached_files', $files);
+		update_post_meta($id, 'attached_files', $files);
+		add_post_meta($id, 'upload_dir', wp_upload_dir()["url"] . get_folder($attached));
+		update_post_meta($id, 'upload_dir', wp_upload_dir()["url"] . get_folder($attached));
 }
-
 
 function get_folder($path) {
 	$folder = explode('/', $path);
 	$last = last($folder);
-	if($folder[$last-2]=="pluggin_ad-master") { //plugin_basename( __FILE__ )
-	return $folder[$last-1].'/'.$folder[$last].'/';
-	} else {
-	return  $folder[$last-2]. '/' . $folder[$last-1].'/'.$folder[$last].'/';
-}
+	return '/'.$folder[$last];
 }
 
 function last($array) { 
@@ -184,8 +168,8 @@ function upload_file_meta( $id ) {
 
 		add_post_meta($id, 'uploaded_files', $upload);
 		update_post_meta($id, 'uploaded_files', $upload);
-		add_post_meta($id, 'upload_dir', wp_upload_dir());
-		update_post_meta($id, 'upload_dir', wp_upload_dir());
+		add_post_meta($id, 'upload_dir', wp_upload_dir()["url"]);
+		update_post_meta($id, 'upload_dir', wp_upload_dir()["url"]);
 }
 
 function link_images($file) {
