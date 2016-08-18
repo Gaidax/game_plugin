@@ -114,8 +114,10 @@ function attach_existing($id) {
 		$files = str_replace("/var/www/html", get_site_url(), $files);
 		add_post_meta($id, 'attached_files', $files);
 		update_post_meta($id, 'attached_files', $files);
+		if($_POST["attach_dir"] !='None') {
 		add_post_meta($id, 'upload_dir', wp_upload_dir()["url"] . get_folder($attached));
 		update_post_meta($id, 'upload_dir', wp_upload_dir()["url"] . get_folder($attached));
+	}
 }
 
 function get_folder($path) {
@@ -206,8 +208,9 @@ function upload_to_plugin_dir( $dir ) {
 	$dir_n = "uploaded_games/".$custom_name;
 	$plug_p = plugin_dir_path(__FILE__) . $dir_n;
 	$plug_u = plugin_dir_url(__FILE__) . $dir_n;
-
+	//if(isset($_POST['post_id'])) {
 	$id = $_POST['post_id'];
+
 	$parent = get_post( $id )->post_parent;
 
 		if( "page" == get_post_type( $id ) || "page" == get_post_type( $parent ) ) {
@@ -217,6 +220,7 @@ function upload_to_plugin_dir( $dir ) {
 			$dir['basedir'] = $plug_p;
 			$dir['baseurl'] = $plug_u;
 	}
+//}
 	return $dir;
 }
 
@@ -227,7 +231,7 @@ function update_edit_form() {
 
 
 function delete_fold() {
-	$success;	
+	$success=null;	
 	if(isset($_GET["deletion"])) {	
 		$to_del = $_GET["deletion"];
 		$ps = delTree(plugin_dir_path(__FILE__)."/uploaded_games/".$to_del);

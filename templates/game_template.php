@@ -133,11 +133,11 @@ function link_files() {
         <div class="<?php echo deliver_get_content_classes( false, 'content-wrapper' ); ?>">
             <div id="main" role="main">
                 <?php 
-                deliver_get_template( 'content-single', $post_layout );
+                //deliver_get_template( 'content-single', $post_layout );
                 echo '<canvas id = "canvas" width="1024" height="800"></canvas>';
                 echo "<script src='https://code.createjs.com/createjs-2015.11.26.min.js'></script>";
                 link_files();
-                echo get_post_meta(get_the_ID(), 'upload_dir', true);
+                //echo get_post_meta(get_the_ID(), 'upload_dir', true);
 				?>
                 <span class="jq"></span>
             </div>
